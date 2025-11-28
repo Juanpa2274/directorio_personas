@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+from directorio import guardar_persona, inicializar_csv
 
 ventana = None
 entrada_nombre = None
@@ -8,11 +9,33 @@ etiqueta_estado = None
 
 
 def agregar_persona():
+    global ventana, entrada_nombre, entrada_numero, etiqueta_estado
     print("Agregar persona")
+    nombre = entrada_nombre.get()
+    numero = entrada_numero.get()
+    
+    if not nombre or not numero:
+        messagebox.showerror("Error", "Debes capturar ambos datos")
+
+    if guardar_persona(nombre, numero):
+        etiqueta_estado.config(text=f"Agregado {nombre}")
+        entrada_nombre.delete(0, tk.END)
+        entrada_numero.delete(0, tk.END)
+        entrada_nombre.focus()
+        ventana.after(5000,lambda: etiqueta_estado.config(text=""))
+    else:
+        messagebox.showerror("Error", "No se pudo guardar el contacto")
+
+
+
 
 def limpiar_campos():
+    global entrada_nombre, entrada_numero, etiqueta_estado
     print("Limpiar campos")
-
+    entrada_nombre.delete(0, tk.END)
+    entrada_numero.delete(0, tk.END)
+    etiqueta_estado.config(text="")
+    entrada_nombre.focus()
 
 def construir_interfaz():
     global ventana, entrada_nombre, entrada_numero, etiqueta_estado
@@ -40,6 +63,7 @@ def construir_interfaz():
 
 def main():
     global ventana
+    inicializar_csv()
     construir_interfaz()
     ventana.mainloop()
 
